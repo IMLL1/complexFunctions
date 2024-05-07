@@ -34,7 +34,7 @@ if checkCReqs:
 
 # mpl setup
 plt.rcParams.update(
-    {"axes.grid": True, "grid.alpha": 0.75, "image.cmap": "jet", "lines.markersize": 1}
+    {"axes.grid": True, "grid.alpha": 0.75, "image.cmap": "gist_rainbow", "lines.markersize": 1}
 )
 
 
@@ -96,7 +96,6 @@ plt.tight_layout()
 
 # mapping
 plt.figure(figsize=(16, 8))
-plt.set_cmap("hsv")
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 
 plt.subplot(2, 4, 1)
