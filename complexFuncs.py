@@ -32,7 +32,9 @@ if checkCReqs:
         raise Warning("Cauchy-Riemann Equations not satisfied")
 
 # mpl setup
-plt.rcParams.update({"axes.grid": True, "grid.alpha": 0.75, "image.cmap": "jet"})
+plt.rcParams.update(
+    {"axes.grid": True, "grid.alpha": 0.75, "image.cmap": "jet", "lines.markersize": 1}
+)
 
 
 X, Y = np.meshgrid(np.linspace(*[*Xrange, 250]), np.linspace(*[*Yrange, 250]))
