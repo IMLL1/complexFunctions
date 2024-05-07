@@ -1,7 +1,7 @@
-f_text = "log(exp(z)-3+exp(-z)-z^2)"
+f_text = "exp(z)+z"
 Xrange = [-2, 2]
 Yrange = [-2, 2]
-checkCReqs = False
+checkCReqs = True
 
 import sympy as sym
 import numpy as np
@@ -41,7 +41,7 @@ theta = np.linspace(0, 2 * np.pi, int(1e4))
 fUnitCirc = fNumpy(np.cos(theta), np.sin(theta))
 linScale = np.linspace(-100, 100, int(1e4))
 fReAx = fNumpy(linScale, 0)
-fImAx = fNumpy(linScale, 0)
+fImAx = fNumpy(0, linScale)
 
 ## Real and Imaginary Parts
 plt.figure(figsize=(12, 5))
