@@ -78,7 +78,10 @@ plt.tight_layout()
 plt.figure(figsize=(12, 5))
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 plt.subplot(1, 2, 1)
-plt.scatter(X, Y, c=np.abs(fPts))
+if np.max(np.abs(fPts) > 1e4 * np.median(np.abs(fPts))):
+    plt.scatter(X, Y, c=np.abs(fPts), norm=col.LogNorm())
+else:
+    plt.scatter(X, Y, c=np.abs(fPts))
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$|f(z)|$")
