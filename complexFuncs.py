@@ -1,7 +1,11 @@
-f_text = "exp(z)+z"
-Xrange = [-2, 2]
-Yrange = [-2, 2]
-checkCReqs = True
+f_text = "exp(z)+z"  # enter function
+Xrange = [-10, 10]  # enter plotting x and y domains
+Yrange = [-10, 10]
+checkCReqs = True  # whether to check Cauchy-Riemann 
+
+## TODO:
+# - Improve pole/large dynamic range detection
+# - enable detection on Re/Im parts graph
 
 import sympy as sym
 import numpy as np
@@ -34,24 +38,37 @@ if checkCReqs:
 
 # mpl setup
 plt.rcParams.update(
-    {"axes.grid": True, "grid.alpha": 0.75, "image.cmap": "gist_rainbow", "lines.markersize": 1}
+    {
+        "axes.grid": True,
+        "grid.alpha": 0.75,
+        "image.cmap": "gist_rainbow",
+        "lines.markersize": 1,
+    }
 )
 
-
+# function viz
 X, Y = np.meshgrid(np.linspace(*[*Xrange, 250]), np.linspace(*[*Yrange, 250]))
 fPts = fNumpy(X, Y)
 
-theta = np.linspace(0,2*np.pi, int(1e4))
-fUnitCirc = fNumpy(np.cos(theta),np.sin(theta))
+# unit circle
+theta = np.linspace(0, 2 * np.pi, int(1e4))
+fUnitCirc = fNumpy(np.cos(theta), np.sin(theta))
 
-linScale = np.linspace(-100,100,int(1e4))
+# real and imag axes
+linScale = np.linspace(-100, 100, int(1e4))
 fReAx = fNumpy(linScale, 0)
 fImAx = fNumpy(0, linScale)
 
-spacedFour = np.linspace(0,4,int(1e4))
+# square
+spacedFour = np.linspace(0, 4, int(1e4))
 sideNum = np.floor(spacedFour)
-spacedFour = 2*np.mod(spacedFour,1) - 1
-zUnitSquare = (sideNum==0) * (1+ spacedFour*1j) + (sideNum==1) * (1j - spacedFour) + (sideNum==2) * (-1 - 1j*spacedFour) + (sideNum==3) * (-1j + spacedFour)
+spacedFour = 2 * np.mod(spacedFour, 1) - 1
+zUnitSquare = (
+    (sideNum == 0) * (1 + spacedFour * 1j)
+    + (sideNum == 1) * (1j - spacedFour)
+    + (sideNum == 2) * (-1 - 1j * spacedFour)
+    + (sideNum == 3) * (-1j + spacedFour)
+)
 fUnitSquare = fNumpy(np.real(zUnitSquare), np.imag(zUnitSquare))
 
 ## Real and Imaginary Parts
@@ -78,7 +95,7 @@ plt.tight_layout()
 plt.figure(figsize=(12, 5))
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 plt.subplot(1, 2, 1)
-if np.max(np.abs(fPts) > 1e4 * np.median(np.abs(fPts))):
+if np.mean(np.abs(fPts)) > 100 * np.median(np.abs(fPts)):
     plt.scatter(X, Y, c=np.abs(fPts), norm=col.LogNorm())
 else:
     plt.scatter(X, Y, c=np.abs(fPts))
