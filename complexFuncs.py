@@ -6,6 +6,7 @@ checkCReqs = True
 import sympy as sym
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as col
 
 # make it symbolic
 f_z = sym.sympify(f_text)
@@ -39,11 +40,19 @@ plt.rcParams.update(
 
 X, Y = np.meshgrid(np.linspace(*[*Xrange, 250]), np.linspace(*[*Yrange, 250]))
 fPts = fNumpy(X, Y)
-theta = np.linspace(0, 2 * np.pi, int(1e4))
-fUnitCirc = fNumpy(np.cos(theta), np.sin(theta))
-linScale = np.linspace(-100, 100, int(1e4))
+
+theta = np.linspace(0,2*np.pi, int(1e4))
+fUnitCirc = fNumpy(np.cos(theta),np.sin(theta))
+
+linScale = np.linspace(-100,100,int(1e4))
 fReAx = fNumpy(linScale, 0)
 fImAx = fNumpy(0, linScale)
+
+spacedFour = np.linspace(0,4,int(1e4))
+sideNum = np.floor(spacedFour)
+spacedFour = 2*np.mod(spacedFour,1) - 1
+zUnitSquare = (sideNum==0) * (1+ spacedFour*1j) + (sideNum==1) * (1j - spacedFour) + (sideNum==2) * (-1 - 1j*spacedFour) + (sideNum==3) * (-1j + spacedFour)
+fUnitSquare = fNumpy(np.real(zUnitSquare), np.imag(zUnitSquare))
 
 ## Real and Imaginary Parts
 plt.figure(figsize=(12, 5))
@@ -76,7 +85,7 @@ plt.title("$|f(z)|$")
 plt.axis([*Xrange, *Yrange])
 plt.colorbar()
 plt.subplot(1, 2, 2)
-plt.scatter(X, Y, c=np.angle(fPts))
+plt.scatter(X, Y, c=np.angle(fPts), cmap="hsv")
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$\\angle f(z)$")
@@ -85,45 +94,71 @@ plt.colorbar()
 plt.tight_layout()
 
 
-plt.figure(figsize=(12, 8))
+# mapping
+plt.figure(figsize=(16, 8))
 plt.set_cmap("hsv")
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 
-plt.subplot(2, 3, 1)
-plt.scatter(np.cos(theta), np.sin(theta), c=theta)
+plt.subplot(2, 4, 1)
+plt.scatter(np.cos(theta), np.sin(theta), c=theta, cmap="hsv")
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$z$")
 
-plt.subplot(2, 3, 1 + 3)
-plt.scatter(np.real(fUnitCirc), np.imag(fUnitCirc), c=theta)
+plt.subplot(2, 4, 1 + 4)
+plt.scatter(np.real(fUnitCirc), np.imag(fUnitCirc), c=theta, cmap="hsv")
 plt.xlabel("$\Re f(z)$")
 plt.ylabel("$\Im f(z)$")
 plt.title("$f(z)$")
 
-plt.subplot(2, 3, 2)
-plt.scatter(linScale, 0 * linScale, c=linScale)
+plt.subplot(2, 4, 2)
+plt.scatter(np.real(zUnitSquare), np.imag(zUnitSquare), c=linScale, cmap="hsv")
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$z$")
 
-plt.subplot(2, 3, 2 + 3)
-plt.scatter(np.real(fReAx), np.imag(fReAx), c=linScale)
+plt.subplot(2, 4, 2 + 4)
+plt.scatter(np.real(fUnitSquare), np.imag(fUnitSquare), c=linScale, cmap="hsv")
 plt.xlabel("$\Re f(z)$")
 plt.ylabel("$\Im f(z)$")
 plt.title("$f(z)$")
 
-plt.subplot(2, 3, 3)
-plt.scatter(0 * linScale, linScale, c=linScale)
+plt.subplot(2, 4, 4)
+plt.scatter(linScale, 0 * linScale, c=linScale, cmap="hsv")
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$z$")
 
-plt.subplot(2, 3, 3 + 3)
-plt.scatter(np.real(fImAx), np.imag(fImAx), c=linScale)
+plt.subplot(2, 4, 4 + 4)
+plt.scatter(np.real(fReAx), np.imag(fReAx), c=linScale, cmap="hsv")
+plt.xlabel("$\Re f(z)$")
+plt.ylabel("$\Im f(z)$")
+plt.title("$f(z)$")
+
+plt.subplot(2, 4, 3)
+plt.scatter(0 * linScale, linScale, c=linScale, cmap="hsv")
+plt.xlabel("$\Re z$")
+plt.ylabel("$\Im z$")
+plt.title("$z$")
+
+plt.subplot(2, 4, 3 + 4)
+plt.scatter(np.real(fImAx), np.imag(fImAx), c=linScale, cmap="hsv")
+plt.xlabel("$\Re f(z)$")
+plt.ylabel("$\Im f(z)$")
+plt.title("$f(z)$")
+
+plt.subplot(2, 4, 3)
+plt.scatter(0 * linScale, linScale, c=linScale, cmap="hsv")
+plt.xlabel("$\Re z$")
+plt.ylabel("$\Im z$")
+plt.title("$z$")
+
+plt.subplot(2, 4, 3 + 4)
+plt.scatter(np.real(fImAx), np.imag(fImAx), c=linScale, cmap="hsv")
 plt.xlabel("$\Re f(z)$")
 plt.ylabel("$\Im f(z)$")
 plt.title("$f(z)$")
 
 plt.tight_layout()
+
 plt.show()
