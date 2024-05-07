@@ -44,7 +44,7 @@ fReAx = fNumpy(linScale, 0)
 fImAx = fNumpy(linScale, 0)
 
 ## Real and Imaginary Parts
-plt.figure(figsize=(10, 4))
+plt.figure(figsize=(12, 5))
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 plt.subplot(1, 2, 1)
 plt.scatter(X, Y, c=np.real(fPts))
@@ -64,7 +64,7 @@ plt.tight_layout()
 
 
 ## Angle and Magnitude
-plt.figure(figsize=(10, 4))
+plt.figure(figsize=(12, 5))
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 plt.subplot(1, 2, 1)
 plt.scatter(X, Y, c=np.abs(fPts))
