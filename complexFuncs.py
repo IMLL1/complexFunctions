@@ -1,7 +1,8 @@
-f_text = "exp(z)+z"  # enter function
+f_text = "log(exp(z)-3+exp(-z)-z^2)"  # enter function
 Xrange = [-10, 10]  # enter plotting x and y domains
 Yrange = [-10, 10]
-checkCReqs = True  # whether to check Cauchy-Riemann equation satisfaction
+checkCReqs = True
+# whether to check Cauchy-Riemann equation satisfaction. Sometimes simplification times out. In the future, I will automatically detect this and skip the process
 
 import sympy as sym
 import numpy as np
@@ -30,7 +31,7 @@ if checkCReqs:
     if uxEQvy and uyEQnvx:
         print("Cauchy-Riemann Equations satisfied")
     else:
-        raise Warning("Cauchy-Riemann Equations not satisfied")
+        print("Cauchy-Riemann Equations not satisfied")
 
 # mpl setup
 plt.rcParams.update(
@@ -64,7 +65,7 @@ ssLog = np.sum((absLog - logMdl) ** 2) / np.sum((absLog - np.mean(absLog)) ** 2)
 ssLin = np.sum((absLin - linMdl) ** 2) / np.sum((absLin - np.mean(absLin)) ** 2)
 
 logScale = ssLog < ssLin
-linThresh = 10 ** (np.median(absLog) - 3) # this cutoff is somewhat arbitrary
+linThresh = 10 ** (np.median(absLog) - 3)  # this cutoff is somewhat arbitrary
 
 # unit circle
 theta = np.linspace(0, 2 * np.pi, int(1e4))
@@ -91,14 +92,18 @@ fUnitSquare = fNumpy(np.real(zUnitSquare), np.imag(zUnitSquare))
 plt.figure(figsize=(12, 5))
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 plt.subplot(1, 2, 1)
-plt.scatter(X, Y, c=np.real(fPts), norm=(col.SymLogNorm(linThresh) if logScale else None))
+plt.scatter(
+    X, Y, c=np.real(fPts), norm=(col.SymLogNorm(linThresh) if logScale else None)
+)
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$\Re f(z)$")
 plt.axis([*Xrange, *Yrange])
 plt.colorbar()
 plt.subplot(1, 2, 2)
-plt.scatter(X, Y, c=np.imag(fPts), norm=(col.SymLogNorm(linThresh) if logScale else None))
+plt.scatter(
+    X, Y, c=np.imag(fPts), norm=(col.SymLogNorm(linThresh) if logScale else None)
+)
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$\Im f(z)$")
