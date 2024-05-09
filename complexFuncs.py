@@ -1,11 +1,7 @@
 f_text = "exp(z)+z"  # enter function
 Xrange = [-10, 10]  # enter plotting x and y domains
 Yrange = [-10, 10]
-checkCReqs = True  # whether to check Cauchy-Riemann 
-
-## TODO:
-# - Improve pole/large dynamic range detection
-# - enable detection on Re/Im parts graph
+checkCReqs = True  # whether to check Cauchy-Riemann equation satisfaction
 
 import sympy as sym
 import numpy as np
@@ -46,9 +42,29 @@ plt.rcParams.update(
     }
 )
 
-# function viz
+# eval at given points
 X, Y = np.meshgrid(np.linspace(*[*Xrange, 250]), np.linspace(*[*Yrange, 250]))
 fPts = fNumpy(X, Y)
+
+# determine whether to use log scale
+
+# take the absolute values, flatten, remove nans, then sort. This "1-dimensionalizes" the data. Both in linear space and log space
+absLin = np.abs(fPts).flatten()
+absLog = np.log10(np.abs(fPts)).flatten()
+absLin = np.sort(absLin[~np.isnan(absLin)])
+absLog = np.sort(absLog[~np.isnan(absLog)])
+nLin = len(absLin)
+nLog = len(absLog)
+
+# instead of using an actual linear fit, use the one the colorbar will use that goes through min and max points
+linMdl = absLin[0] + np.arange(nLin) * (absLin[-1] - absLin[0]) / nLin
+logMdl = absLog[0] + np.arange(nLog) * (absLog[-1] - absLog[0]) / nLog
+# find sum((value-model)^2)/SST
+ssLog = np.sum((absLog - logMdl) ** 2) / np.sum((absLog - np.mean(absLog)) ** 2)
+ssLin = np.sum((absLin - linMdl) ** 2) / np.sum((absLin - np.mean(absLin)) ** 2)
+
+logScale = ssLog < ssLin
+linThresh = 10 ** (np.median(absLog) - 3) # this cutoff is somewhat arbitrary
 
 # unit circle
 theta = np.linspace(0, 2 * np.pi, int(1e4))
@@ -75,14 +91,14 @@ fUnitSquare = fNumpy(np.real(zUnitSquare), np.imag(zUnitSquare))
 plt.figure(figsize=(12, 5))
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 plt.subplot(1, 2, 1)
-plt.scatter(X, Y, c=np.real(fPts))
+plt.scatter(X, Y, c=np.real(fPts), norm=(col.SymLogNorm(linThresh) if logScale else None))
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$\Re f(z)$")
 plt.axis([*Xrange, *Yrange])
 plt.colorbar()
 plt.subplot(1, 2, 2)
-plt.scatter(X, Y, c=np.imag(fPts))
+plt.scatter(X, Y, c=np.imag(fPts), norm=(col.SymLogNorm(linThresh) if logScale else None))
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$\Im f(z)$")
@@ -95,10 +111,7 @@ plt.tight_layout()
 plt.figure(figsize=(12, 5))
 plt.suptitle("$f(z)=" + sym.latex(f_z) + "$")
 plt.subplot(1, 2, 1)
-if np.mean(np.abs(fPts)) > 100 * np.median(np.abs(fPts)):
-    plt.scatter(X, Y, c=np.abs(fPts), norm=col.LogNorm())
-else:
-    plt.scatter(X, Y, c=np.abs(fPts))
+plt.scatter(X, Y, c=np.abs(fPts), norm=(col.LogNorm() if logScale else None))
 plt.xlabel("$\Re z$")
 plt.ylabel("$\Im z$")
 plt.title("$|f(z)|$")
