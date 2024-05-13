@@ -1,8 +1,9 @@
-f_text = "log(exp(z)-3+exp(-z)-z^2)"  # enter function
+# f_text = "log(exp(z)-3+exp(-z)-z^2)"  # enter function
+f_text = "log(z)*log10(z)"
 Xrange = [-10, 10]  # enter plotting x and y domains
 Yrange = [-10, 10]
-checkCReqs = True
-# whether to check Cauchy-Riemann equation satisfaction. Sometimes simplification times out. In the future, I will automatically detect this and skip the process
+# checkCReqs = True
+# # whether to check Cauchy-Riemann equation satisfaction. Sometimes simplification times out. In the future, I will automatically detect this and skip the process
 
 import sympy as sym
 import numpy as np
@@ -18,20 +19,20 @@ f_xy = f_z.subs("z", x + y * 1j)
 f_xy = f_xy.subs("i", 1j)
 fNumpy = sym.lambdify((x, y), f_xy, "numpy")
 
-# check Cauchy Riemann Equations
-if checkCReqs:
-    u = sym.re(f_xy)
-    v = sym.im(f_xy)
-    ux = u.diff(x)
-    vx = v.diff(x)
-    uy = u.diff(y)
-    vy = v.diff(y)
-    uxEQvy = (ux - vy).simplify() == 0
-    uyEQnvx = (uy + vx).simplify() == 0
-    if uxEQvy and uyEQnvx:
-        print("Cauchy-Riemann Equations satisfied")
-    else:
-        print("Cauchy-Riemann Equations not satisfied")
+# # check Cauchy Riemann Equations
+# if checkCReqs:
+#     u = sym.re(f_xy)
+#     v = sym.im(f_xy)
+#     ux = u.diff(x)
+#     vx = v.diff(x)
+#     uy = u.diff(y)
+#     vy = v.diff(y)
+#     uxEQvy = (ux - vy).simplify() == 0
+#     uyEQnvx = (uy + vx).simplify() == 0
+#     if uxEQvy and uyEQnvx:
+#         print("Cauchy-Riemann Equations satisfied")
+#     else:
+#         print("Cauchy-Riemann Equations not satisfied")
 
 # mpl setup
 plt.rcParams.update(
@@ -49,11 +50,13 @@ fPts = fNumpy(X, Y)
 
 # determine whether to use log scale
 
-# take the absolute values, flatten, remove nans, then sort. This "1-dimensionalizes" the data. Both in linear space and log space
+# take the absolute values, flatten, remove nans and infinities, then sort. This "1-dimensionalizes" the data. Both in linear space and log space
 absLin = np.abs(fPts).flatten()
 absLog = np.log10(np.abs(fPts)).flatten()
 absLin = np.sort(absLin[~np.isnan(absLin)])
 absLog = np.sort(absLog[~np.isnan(absLog)])
+absLin = absLin[np.abs(absLin) != float("inf")]
+absLog = absLog[np.abs(absLog) != float("inf")]
 nLin = len(absLin)
 nLog = len(absLog)
 
