@@ -1,5 +1,5 @@
 # f_text = "log(exp(z)-3+exp(-z)-z^2)"  # enter function
-f_text = "log(z)*log10(z)"
+f_text = "z+1/z"
 Xrange = [-10, 10]  # enter plotting x and y domains
 Yrange = [-10, 10]
 # checkCReqs = True
